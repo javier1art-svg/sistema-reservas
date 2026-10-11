@@ -1,7 +1,7 @@
 {
   "name": "Sistema de Reservas de Apartamentos",
   "short_name": "ReservasApto",
-  "start_url": "./Reservas ApartamentosApp.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0E151D",
   "theme_color": "#0B6BCB",
