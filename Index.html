@@ -1,0 +1,996 @@
+<!doctype html><html><head><!-- Configuración PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0B6BCB">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ReservasApto"><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Reservas Apartamentos</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: app de teléfono en una sola columna (máx. 520 px). Barra superior fija,
+   cuatro pestañas abajo, formulario y ayuda como pantallas completas que suben. */
+:root {
+  --outer: #E3E8EE;
+  --bg: #F3F5F8;
+  --surface: #FFFFFF;
+  --surface-2: #E8EDF3;
+  --ink: #111923;
+  --ink-2: #56616F;
+  --line: #D8DFE7;
+  --accent: #0B6BCB;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #DDEBFA;
+  --go: #1B7A3D;
+  --go-ink: #FFFFFF;
+  --err: #B3261E;
+  --err-soft: #FCE9E7;
+  --st-pend-bg: #FFEFBF; --st-pend-fg: #6B4E00;
+  --st-in-bg: #CDEED7;   --st-in-fg: #0F5A2A;
+  --st-out-bg: #E1E5EA;  --st-out-fg: #38414B;
+  --st-can-bg: #F8D9D6;  --st-can-fg: #8A1C14;
+  --st-free-bg: #DDEBFA; --st-free-fg: #0A4F96;
+  --code-bg: #101A24; --code-fg: #D6E2EE;
+  --shadow: 0 1px 2px rgba(17,25,35,.06), 0 6px 18px rgba(17,25,35,.06);
+  --ui: "Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --display: "Bricolage Grotesque", "Figtree", system-ui, sans-serif;
+  --mono: ui-monospace, "SF Mono", Consolas, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --outer: #090E14; --bg: #0E151D; --surface: #17212C; --surface-2: #202C39;
+    --ink: #E8EEF5; --ink-2: #9BA8B7; --line: #2B3846;
+    --accent: #5AA9FF; --accent-ink: #06223F; --accent-soft: #163251;
+    --go: #3DB36F; --go-ink: #04210F; --err: #FF8F85; --err-soft: #4A201C;
+    --st-pend-bg: #4B3B0C; --st-pend-fg: #FFD97A;
+    --st-in-bg: #14412B;   --st-in-fg: #85E3A9;
+    --st-out-bg: #2A333E;  --st-out-fg: #B9C3CF;
+    --st-can-bg: #502420;  --st-can-fg: #FFAAA0;
+    --st-free-bg: #163251; --st-free-fg: #94C8FF;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --outer: #090E14; --bg: #0E151D; --surface: #17212C; --surface-2: #202C39;
+  --ink: #E8EEF5; --ink-2: #9BA8B7; --line: #2B3846;
+  --accent: #5AA9FF; --accent-ink: #06223F; --accent-soft: #163251;
+  --go: #3DB36F; --go-ink: #04210F; --err: #FF8F85; --err-soft: #4A201C;
+  --st-pend-bg: #4B3B0C; --st-pend-fg: #FFD97A;
+  --st-in-bg: #14412B;   --st-in-fg: #85E3A9;
+  --st-out-bg: #2A333E;  --st-out-fg: #B9C3CF;
+  --st-can-bg: #502420;  --st-can-fg: #FFAAA0;
+  --st-free-bg: #163251; --st-free-fg: #94C8FF;
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.35);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+[hidden] { display: none !important; }
+body { background: var(--outer); color: var(--ink); font-family: var(--ui); font-size: 15px; line-height: 1.4; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+h1, h2, h3, p { margin: 0; text-wrap: balance; }
+svg.ic { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+.app { max-width: 520px; margin-inline: auto; min-height: 100%; background: var(--bg); border-inline: 1px solid var(--line); position: relative; }
+.appbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--bg); padding: 14px 16px 10px; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 60px; }
+.appbar h1 { font-family: var(--display); font-weight: 700; font-size: 26px; letter-spacing: -0.01em; }
+.pad { padding: 4px 16px calc(150px + env(safe-area-inset-bottom, 0px)); display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; align-content: start; }
+.pad > * { min-width: 0; }
+.muted { color: var(--ink-2); }
+.small { font-size: 13px; }
+
+/* Barra de pestañas */
+.tabbar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: min(100%, 520px); z-index: 30; background: var(--surface); border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(4, 1fr); padding-bottom: env(safe-area-inset-bottom, 0px); }
+.tab { background: none; border: 0; padding: 8px 4px 7px; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 12px; font-weight: 600; color: var(--ink-2); min-height: 58px; }
+.tab .pi { width: 58px; height: 30px; border-radius: 15px; display: grid; place-items: center; }
+.tab[aria-current="page"] { color: var(--accent); }
+.tab[aria-current="page"] .pi { background: var(--accent-soft); }
+.fabwrap { position: fixed; bottom: calc(58px + env(safe-area-inset-bottom, 0px) + 14px); left: 50%; transform: translateX(-50%); width: min(100%, 520px); z-index: 25; padding-inline: 16px; display: flex; justify-content: flex-end; pointer-events: none; }
+.fab { pointer-events: auto; display: inline-flex; align-items: center; gap: 8px; min-height: 52px; padding: 0 20px 0 16px; border: 0; border-radius: 26px; background: var(--accent); color: var(--accent-ink); font-weight: 700; font-size: 15px; box-shadow: var(--shadow), 0 6px 20px rgba(11,107,203,.35); }
+
+/* Avisos */
+.toast { position: fixed; top: calc(env(safe-area-inset-top, 0px) + 12px); left: 50%; transform: translateX(-50%); z-index: 80; width: max-content; max-width: calc(100% - 32px); padding: 12px 16px; border-radius: 14px; background: var(--ink); color: var(--bg); font-weight: 600; font-size: 14px; box-shadow: var(--shadow); }
+.toast.err { background: var(--err); color: #fff; }
+:root[data-theme="dark"] .toast.err { color: #2a0a07; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .toast.err { color: #2a0a07; } }
+
+/* Controles base */
+.btn { min-height: 50px; padding: 0 18px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); font-weight: 700; font-size: 15px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn-primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+.btn-go { background: var(--go); color: var(--go-ink); border-color: transparent; }
+.btn-danger { background: var(--err); color: #fff; border-color: transparent; }
+.btn-ghost { background: transparent; border-color: transparent; color: var(--err); min-height: 44px; }
+.btn-sm { min-height: 40px; padding: 0 14px; font-size: 14px; border-radius: 12px; }
+.icon-btn { width: 46px; height: 46px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); display: grid; place-items: center; flex: none; }
+.link { background: none; border: 0; color: var(--accent); font-weight: 700; padding: 8px 0; min-height: 40px; }
+
+.pill { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+.st-pend { background: var(--st-pend-bg); color: var(--st-pend-fg); }
+.st-in { background: var(--st-in-bg); color: var(--st-in-fg); }
+.st-out { background: var(--st-out-bg); color: var(--st-out-fg); }
+.st-can { background: var(--st-can-bg); color: var(--st-can-fg); }
+.st-free { background: var(--st-free-bg); color: var(--st-free-fg); }
+
+.chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-block: 2px; margin-inline: -16px; padding-inline: 16px; }
+.chips::-webkit-scrollbar { display: none; }
+.chip { flex: none; min-height: 40px; padding: 0 16px; border-radius: 20px; border: 1px solid var(--line); background: var(--surface); font-weight: 600; font-size: 14px; }
+.chip[aria-pressed="true"], .chip[aria-checked="true"] { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+.chip:disabled { opacity: .5; }
+
+.seg { display: grid; grid-template-columns: 1fr 1fr; background: var(--surface-2); border-radius: 14px; padding: 3px; gap: 3px; }
+.seg button { border: 0; background: none; min-height: 42px; border-radius: 11px; font-weight: 700; color: var(--ink-2); }
+.seg button[aria-selected="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+
+/* Hoy */
+.daynav { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.daybig { text-align: center; display: grid; gap: 2px; }
+.daybig b { font-family: var(--display); font-size: 28px; font-weight: 700; letter-spacing: -0.01em; }
+.daybig span { font-size: 13px; color: var(--ink-2); font-weight: 600; }
+.strip { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin-inline: -16px; padding: 2px 16px; }
+.strip::-webkit-scrollbar { display: none; }
+.day { flex: none; width: 54px; height: 68px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); display: grid; place-items: center; align-content: center; gap: 1px; padding: 0; }
+.day span { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-2); font-weight: 600; }
+.day b { font-family: var(--display); font-size: 22px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.day.today { border-color: var(--accent); }
+.day[aria-pressed="true"] { background: var(--accent); border-color: transparent; color: var(--accent-ink); }
+.day[aria-pressed="true"] span { color: var(--accent-ink); opacity: .85; }
+.kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 8px 4px; font-size: 12px; color: var(--ink-2); font-weight: 600; display: grid; justify-items: center; gap: 0; }
+.kpi b { color: var(--ink); font-family: var(--display); font-size: 22px; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.list { display: grid; gap: 10px; }
+.acard, .rcard { width: 100%; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 14px; box-shadow: var(--shadow); display: grid; gap: 8px; }
+.ahead { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; }
+.aid { font-family: var(--display); font-size: 24px; font-weight: 700; min-width: 44px; }
+.aown { font-size: 13px; color: var(--ink-2); min-width: 0; overflow-wrap: anywhere; }
+.abody { display: grid; gap: 2px; }
+.abody strong { font-size: 16px; }
+.mov { font-size: 13px; font-weight: 600; color: var(--accent); }
+.rcard { grid-template-columns: 52px minmax(0, 1fr) auto; align-items: center; gap: 12px; }
+.abadge { width: 52px; height: 52px; border-radius: 14px; background: var(--surface-2); display: grid; place-items: center; font-family: var(--display); font-weight: 700; font-size: 19px; }
+.rmain { display: grid; gap: 1px; min-width: 0; }
+.rmain b { font-size: 16px; overflow-wrap: anywhere; }
+.rmain small { font-size: 13px; color: var(--ink-2); overflow-wrap: anywhere; }
+.rside { display: grid; gap: 6px; justify-items: end; }
+
+.calwrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+table.cal { table-layout: fixed; border-collapse: separate; border-spacing: 0; width: 700px; }
+table.cal th { padding: 8px 0; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-2); font-weight: 600; border-bottom: 1px solid var(--line); background: var(--surface); }
+table.cal th b { display: block; font-family: var(--display); font-size: 17px; color: var(--ink); letter-spacing: 0; }
+table.cal th.today b { color: var(--accent); }
+table.cal th.sel { background: var(--accent-soft); }
+table.cal td { height: 52px; padding: 4px 2px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+table.cal th:first-child, table.cal td:first-child { position: sticky; left: 0; width: 56px; background: var(--surface); z-index: 2; text-align: center; font-family: var(--display); font-weight: 700; font-size: 17px; }
+table.cal td.res { padding: 4px; border-right: 0; }
+.calbox { height: 100%; min-height: 40px; border-radius: 10px; padding: 0 8px; display: flex; align-items: center; font-size: 12.5px; font-weight: 700; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; cursor: pointer; }
+
+/* Reservas */
+.search input { width: 100%; min-height: 50px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface); padding: 0 16px; font-size: 16px; }
+details.range { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
+details.range summary { min-height: 46px; display: flex; align-items: center; padding: 0 14px; font-weight: 600; font-size: 14px; list-style: none; cursor: pointer; }
+details.range summary::-webkit-details-marker { display: none; }
+details.range .rbody { padding: 0 14px 14px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.listhead { display: flex; justify-content: space-between; align-items: center; }
+.empty { text-align: center; padding: 28px 12px; color: var(--ink-2); border: 1px dashed var(--line); border-radius: 18px; }
+
+/* Campos */
+.field { display: grid; gap: 6px; min-width: 0; }
+.field > label, .lbl { font-size: 13px; font-weight: 700; color: var(--ink-2); }
+.field input[type="text"], .field input[type="date"], .field input[type="number"], .field input[type="search"], .field textarea, .field select { width: 100%; min-height: 50px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); padding: 0 14px; font-size: 16px; }
+.field textarea { padding: 12px 14px; min-height: 88px; resize: vertical; }
+.field input[readonly] { background: var(--surface-2); color: var(--ink-2); }
+.field input:disabled, .field textarea:disabled { background: var(--surface-2); color: var(--ink-2); }
+.field .bad { border-color: var(--err); background: var(--err-soft); }
+.ferr { color: var(--err); font-size: 13px; font-weight: 600; }
+.ferr:empty { display: none; }
+.grid2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.field input[type="date"] { min-width: 0; }
+.inline { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; }
+.stepper { display: grid; grid-template-columns: 50px minmax(0, 1fr) 50px; gap: 6px; }
+.stepper button { min-height: 50px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); font-size: 22px; font-weight: 700; }
+.stepper button:disabled { opacity: .4; }
+.stepper input { text-align: center; font-variant-numeric: tabular-nums; }
+.switch { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: center; min-height: 50px; font-weight: 600; }
+.switch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.switch .track { width: 52px; height: 30px; border-radius: 15px; background: var(--line); position: relative; transition: background .15s; }
+.switch .track::after { content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.3); transition: transform .15s; }
+.switch input:checked + .track { background: var(--accent); }
+.switch input:checked + .track::after { transform: translateX(22px); }
+.switch input:focus-visible + .track { outline: 3px solid var(--accent); outline-offset: 2px; }
+.switch input:disabled + .track { opacity: .5; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 16px; display: grid; gap: 12px; min-width: 0; }
+.card > h3 { font-family: var(--display); font-size: 17px; font-weight: 700; }
+.info { background: var(--surface-2); border-radius: 12px; padding: 10px 12px; font-size: 13.5px; color: var(--ink-2); display: grid; gap: 2px; }
+.info b { color: var(--ink); }
+
+/* Pantallas completas */
+.screen { position: fixed; top: 0; bottom: 0; left: 50%; transform: translateX(-50%); width: min(100%, 520px); z-index: 50; background: var(--bg); display: flex; flex-direction: column; border-inline: 1px solid var(--line); }
+.screen:not([hidden]) { animation: up .22s ease-out; }
+@keyframes up { from { transform: translate(-50%, 28px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+.sbar { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; padding: calc(10px + env(safe-area-inset-top, 0px)) 16px 10px; border-bottom: 1px solid var(--line); background: var(--bg); }
+.sbar h2 { font-family: var(--display); font-size: 21px; font-weight: 700; }
+.sbody { flex: 1; overflow-y: auto; padding: 14px 16px 28px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; align-content: start; }
+.sfoot { border-top: 1px solid var(--line); background: var(--surface); padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px)); display: grid; gap: 8px; }
+.sfoot .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.errsum { background: var(--err-soft); color: var(--err); border-radius: 14px; padding: 12px 14px; font-weight: 700; font-size: 14px; }
+
+/* Apartamentos */
+.apt { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 14px; display: grid; gap: 12px; box-shadow: var(--shadow); }
+.apt-head { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; }
+.apt-head .t { display: grid; gap: 1px; min-width: 0; }
+.apt-head .t b { font-size: 15px; }
+.apt-head .t small { color: var(--ink-2); font-size: 13px; }
+.dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: 14px; margin: 0; }
+.dl dt { color: var(--ink-2); font-weight: 600; }
+.dl dd { margin: 0; overflow-wrap: anywhere; }
+.apt-edit { display: grid; gap: 10px; border-top: 1px solid var(--line); padding-top: 12px; }
+
+/* Más, SQL, Ayuda */
+.rowitem { width: 100%; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px 16px; display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; min-height: 64px; }
+.rowitem b { display: block; font-size: 15.5px; }
+.rowitem small { color: var(--ink-2); font-size: 13px; }
+.rowitem.armed { background: var(--err); color: #fff; border-color: transparent; }
+.rowitem.armed small { color: #fff; }
+pre.code { margin: 0; background: var(--code-bg); color: var(--code-fg); font-family: var(--mono); font-size: 12px; line-height: 1.55; padding: 14px; border-radius: 14px; overflow-x: auto; max-height: 62vh; overflow-y: auto; white-space: pre; }
+.logitem { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; display: grid; gap: 4px; }
+.logitem time { font-family: var(--mono); font-size: 11px; color: var(--ink-2); }
+.logitem pre { margin: 0; font-family: var(--mono); font-size: 12px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.logitem.k-w { border-color: var(--accent); }
+.logitem.k-e { border-color: var(--err); }
+.logitem.k-e pre { color: var(--err); }
+.prose { display: grid; gap: 10px; font-size: 15px; line-height: 1.55; }
+.prose h3 { font-family: var(--display); font-size: 17px; margin-top: 8px; }
+.prose ul, .prose ol { margin: 0; padding-left: 22px; display: grid; gap: 6px; }
+code { font-family: var(--mono); font-size: 12.5px; background: var(--surface-2); padding: 1px 5px; border-radius: 5px; }
+
+@media (prefers-reduced-motion: reduce) { .screen:not([hidden]) { animation: none; } .switch .track, .switch .track::after { transition: none; } }
+</style>
+
+<div class="app" id="app">
+  <header class="appbar">
+    <h1 id="barTitle">Hoy</h1>
+    <button class="btn btn-sm" id="btnHoy">Ir a hoy</button>
+  </header>
+
+  <main>
+    <!-- HOY -->
+    <section id="t-hoy" class="pad">
+      <div class="daynav">
+        <button class="icon-btn" id="dayPrev" aria-label="Día anterior"><svg class="ic" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="daybig"><b id="hoyBig"></b><span id="hoyTag"></span></div>
+        <button class="icon-btn" id="dayNext" aria-label="Día siguiente"><svg class="ic" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+      </div>
+      <div class="strip" id="strip"></div>
+      <div class="kpis" id="kpis"></div>
+      <div class="seg" role="tablist" aria-label="Vista">
+        <button role="tab" data-seg="estado" aria-selected="true">Estado</button>
+        <button role="tab" data-seg="cal" aria-selected="false">Calendario</button>
+      </div>
+      <div class="list" id="hoyEstado"></div>
+      <div id="hoyCal" hidden></div>
+    </section>
+
+    <!-- RESERVAS -->
+    <section id="t-reservas" class="pad" hidden>
+      <div class="search field"><input type="search" id="fTxt" placeholder="Buscar huésped o correo" aria-label="Buscar huésped o correo"></div>
+      <div class="chips" id="chipApto" role="group" aria-label="Apartamento"></div>
+      <div class="chips" id="chipEstado" role="group" aria-label="Estado"></div>
+      <details class="range" id="range">
+        <summary id="rangeSum">Rango de fechas</summary>
+        <div class="rbody">
+          <div class="field"><label for="fDesde">Desde</label><input type="date" id="fDesde"></div>
+          <div class="field"><label for="fHasta">Hasta</label><input type="date" id="fHasta"></div>
+        </div>
+      </details>
+      <div class="listhead"><span class="muted small" id="lblCount"></span><button class="link" id="btnLimpiar">Limpiar filtros</button></div>
+      <div class="list" id="resList"></div>
+    </section>
+
+    <!-- APARTAMENTOS -->
+    <section id="t-aptos" class="pad" hidden>
+      <p class="muted small">Datos fijos de cada apartamento. Si cambia el propietario o el host, todas las reservas muestran el dato nuevo.</p>
+      <div class="list" id="aptList"></div>
+      <div class="card">
+        <h3>Nuevo apartamento</h3>
+        <div class="field"><label for="aptNuevoId">Código (1 a 6 letras o números)</label><input type="text" id="aptNuevoId" maxlength="6" placeholder="Ej. D12" autocapitalize="characters"></div>
+        <button class="btn btn-primary" id="btnAptAdd">Agregar apartamento</button>
+      </div>
+    </section>
+
+    <!-- MÁS -->
+    <section id="t-mas" class="pad" hidden>
+      <button class="rowitem" data-open="sql"><span><b>Base de datos y registro SQL</b><small>Esquema de PostgreSQL y consultas de cada acción</small></span><svg class="ic" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+      <button class="rowitem" data-open="ayuda"><span><b>Ayuda y reglas</b><small>Cómo se usa y qué reglas aplica el sistema</small></span><svg class="ic" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+      <button class="rowitem" id="btnCsv"><span><b>Copiar lista como CSV</b><small>Copia las reservas del filtro actual para pegarlas en Excel</small></span></button>
+      <button class="rowitem" id="btnReset"><span><b>Restablecer datos de ejemplo</b><small>Borra los cambios hechos en este dispositivo</small></span></button>
+      <p class="muted small">Los datos de esta maqueta son de ejemplo y se guardan solo en este navegador.</p>
+    </section>
+  </main>
+
+  <div class="fabwrap"><button class="fab" id="fab"><svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Nueva reserva</button></div>
+
+  <nav class="tabbar" aria-label="Secciones">
+    <button class="tab" data-tab="hoy" aria-current="page"><span class="pi"><svg class="ic" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg></span>Hoy</button>
+    <button class="tab" data-tab="reservas"><span class="pi"><svg class="ic" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></svg></span>Reservas</button>
+    <button class="tab" data-tab="aptos"><span class="pi"><svg class="ic" viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M9 8h2M13 8h2M9 12h2M13 12h2M10 20.5v-4h4v4"/></svg></span>Apartamentos</button>
+    <button class="tab" data-tab="mas"><span class="pi"><svg class="ic" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></svg></span>Más</button>
+  </nav>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<!-- FORMULARIO DE RESERVA -->
+<div class="screen" id="s-form" hidden role="dialog" aria-label="Reserva">
+  <header class="sbar">
+    <button class="icon-btn" id="formBack" aria-label="Volver"><svg class="ic" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <h2 id="formTitle">Reserva nueva</h2>
+    <span id="formPill"></span>
+  </header>
+  <div class="sbody">
+    <div class="errsum" id="errSum" role="alert" hidden></div>
+    <section class="card">
+      <h3>Huésped</h3>
+      <div class="field"><label for="edtEmail">Correo electrónico</label><input type="text" id="edtEmail" inputmode="email" autocomplete="off" autocapitalize="none"><div class="ferr" id="e_edtEmail"></div></div>
+      <div class="field"><label for="edtHuesped">Nombre del huésped</label><input type="text" id="edtHuesped" autocomplete="off"><div class="ferr" id="e_edtHuesped"></div></div>
+      <div class="field"><label for="edtDoc">Documento de identidad</label>
+        <div class="inline"><input type="text" id="edtDoc" placeholder="Sin documento adjunto"><button type="button" class="btn btn-sm" id="btnDoc">Adjuntar</button></div>
+        <input type="file" id="fileDoc" hidden>
+      </div>
+    </section>
+    <section class="card">
+      <h3>Apartamento</h3>
+      <div class="chips" id="cbApto" role="radiogroup" aria-label="Apartamento"></div>
+      <div class="ferr" id="e_cbApto"></div>
+      <div class="info" id="aptInfo"></div>
+    </section>
+    <section class="card">
+      <h3>Estadía</h3>
+      <div class="grid2">
+        <div class="field"><label for="edtLlegada">Llegada</label><input type="date" id="edtLlegada"></div>
+        <div class="field"><label for="edtSalida">Salida</label><input type="date" id="edtSalida"></div>
+      </div>
+      <div class="ferr" id="e_edtLlegada"></div>
+      <div class="ferr" id="e_edtSalida"></div>
+      <div class="field"><label for="edtNoches">Noches</label><input type="text" id="edtNoches" readonly></div>
+      <div class="grid2">
+        <div class="field"><span class="lbl" id="lblH">Huéspedes</span>
+          <div class="stepper"><button type="button" data-step="edtHuespedesCant" data-delta="-1" aria-label="Menos huéspedes">−</button><input type="number" id="edtHuespedesCant" min="1" step="1" inputmode="numeric" aria-labelledby="lblH"><button type="button" data-step="edtHuespedesCant" data-delta="1" aria-label="Más huéspedes">+</button></div>
+        </div>
+        <div class="field"><span class="lbl" id="lblI">Invitados</span>
+          <div class="stepper"><button type="button" data-step="edtInvitadosCant" data-delta="-1" aria-label="Menos invitados">−</button><input type="number" id="edtInvitadosCant" min="0" step="1" inputmode="numeric" aria-labelledby="lblI"><button type="button" data-step="edtInvitadosCant" data-delta="1" aria-label="Más invitados">+</button></div>
+        </div>
+      </div>
+      <div class="ferr" id="e_edtHuespedesCant"></div>
+      <div class="ferr" id="e_edtInvitadosCant"></div>
+    </section>
+    <section class="card">
+      <h3>Parqueo fijo</h3>
+      <label class="switch"><input type="checkbox" id="chkParqueo"><span class="track"></span><span>Requiere parqueo</span></label>
+      <div class="field"><label for="edtParqueoUbicacion">Ubicación</label><input type="text" id="edtParqueoUbicacion" readonly></div>
+    </section>
+    <section class="card">
+      <h3>Comentarios</h3>
+      <div class="field"><textarea id="edtComentarios" aria-label="Comentarios adicionales" rows="3"></textarea></div>
+    </section>
+  </div>
+  <footer class="sfoot" id="formFoot"></footer>
+</div>
+
+<!-- SQL -->
+<div class="screen" id="s-sql" hidden role="dialog" aria-label="Base de datos">
+  <header class="sbar">
+    <button class="icon-btn" data-close aria-label="Volver"><svg class="ic" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <h2>Base de datos</h2><span></span>
+  </header>
+  <div class="sbody">
+    <div class="seg" role="tablist" aria-label="Contenido">
+      <button role="tab" data-sqlseg="log" aria-selected="true">Consultas</button>
+      <button role="tab" data-sqlseg="schema" aria-selected="false">Esquema</button>
+    </div>
+    <div class="list" id="logBox"></div>
+    <div id="schemaBox" hidden>
+      <button class="btn btn-sm" id="btnCopySchema" style="margin-bottom:10px">Copiar esquema</button>
+      <pre class="code" id="schemaPre"></pre>
+    </div>
+  </div>
+</div>
+
+<!-- AYUDA -->
+<div class="screen" id="s-ayuda" hidden role="dialog" aria-label="Ayuda">
+  <header class="sbar">
+    <button class="icon-btn" data-close aria-label="Volver"><svg class="ic" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <h2>Ayuda y reglas</h2><span></span>
+  </header>
+  <div class="sbody">
+    <div class="prose">
+      <h3>Cómo se usa</h3>
+      <ul>
+        <li><b>Hoy</b> muestra cómo está cada apartamento en la fecha elegida. Toca un día de la franja para cambiarla.</li>
+        <li><b>Calendario</b> muestra 14 días seguidos. Toca una reserva para abrirla.</li>
+        <li><b>Reservas</b> lista todas las reservas. Filtra por apartamento, estado, fechas o texto.</li>
+        <li>Toca <b>Nueva reserva</b> para crear una. Queda como Pendiente hasta el check-in.</li>
+        <li>En un apartamento libre de la pantalla Hoy, tócalo para reservarlo con esa fecha ya puesta.</li>
+      </ul>
+      <h3>Reglas de negocio</h3>
+      <ol>
+        <li>Una reserva ocupa las noches desde la llegada hasta la víspera de la salida. Una salida y una llegada pueden caer el mismo día.</li>
+        <li>Un apartamento no puede tener dos reservas activas con fechas que se cruzan. Las canceladas no cuentan.</li>
+        <li>Huéspedes más invitados no pueden superar la capacidad del apartamento.</li>
+        <li>El check-in solo se registra desde la fecha de llegada, con la reserva Pendiente y sin otro huésped dentro del apartamento.</li>
+        <li>El check-out solo aplica a reservas con Check-In. Si el huésped se va antes de la salida, la salida se acorta a hoy y el apartamento queda libre.</li>
+        <li>Las reservas con Check-Out o canceladas se cierran. Solo se pueden editar los comentarios.</li>
+        <li>El parqueo es fijo por apartamento, así que no hay conflictos de parqueo aparte.</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<script type="text/plain" id="sqlSchema">-- Esquema PostgreSQL 12+ para el Sistema de Gestión de Reservas
+-- Ejecutar con: psql -d tu_base -f esquema_reservas.sql
+
+CREATE EXTENSION IF NOT EXISTS btree_gist;
+
+CREATE TYPE estado_reserva AS ENUM ('Pendiente', 'Checked-In', 'Checked-Out', 'Cancelada');
+
+-- Datos constantes de cada apartamento. El propietario y el host viven aquí
+-- y no se copian a cada reserva: si cambian, todas las consultas los ven.
+CREATE TABLE apartamentos (
+    id              text PRIMARY KEY,
+    habitaciones    text     NOT NULL,
+    capacidad       smallint NOT NULL CHECK (capacidad > 0),
+    parqueo_fijo    text,
+    propietario     text     NOT NULL,
+    tel_propietario text,
+    host_nombre     text     NOT NULL,
+    tel_host        text,
+    actualizado_en  timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE reservas (
+    id               integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    apto_id          text NOT NULL REFERENCES apartamentos (id) ON UPDATE CASCADE,
+    estado           estado_reserva NOT NULL DEFAULT 'Pendiente',
+    email            text NOT NULL CHECK (email ~* '^[^@\s]+@[^@\s]+\.[^@\s]+$'),
+    huesped          text NOT NULL,
+    doc_identidad    text,
+    llegada          date NOT NULL,
+    salida           date NOT NULL,
+    huespedes        smallint NOT NULL DEFAULT 1 CHECK (huespedes >= 1),
+    invitados        smallint NOT NULL DEFAULT 0 CHECK (invitados >= 0),
+    requiere_parqueo boolean  NOT NULL DEFAULT false,
+    comentarios      text,
+    checkin_real     timestamptz,
+    checkout_real    timestamptz,
+    creado_en        timestamptz NOT NULL DEFAULT now(),
+    CHECK (salida > llegada),
+    -- Un apartamento no puede tener dos reservas activas que se crucen.
+    -- El rango es [llegada, salida): una salida y una llegada pueden coincidir.
+    CONSTRAINT reservas_sin_solape EXCLUDE USING gist (
+        apto_id WITH =,
+        daterange(llegada, salida, '[)') WITH &&
+    ) WHERE (estado <> 'Cancelada')
+);
+
+CREATE INDEX ix_reservas_fechas ON reservas (llegada, salida);
+CREATE INDEX ix_reservas_email  ON reservas (lower(email));
+
+-- Huéspedes + invitados no pueden superar la capacidad del apartamento.
+CREATE FUNCTION trg_validar_capacidad() RETURNS trigger
+LANGUAGE plpgsql AS $$
+BEGIN
+    IF NEW.huespedes + NEW.invitados >
+       (SELECT capacidad FROM apartamentos WHERE id = NEW.apto_id) THEN
+        RAISE EXCEPTION 'Excede la capacidad del apartamento %', NEW.apto_id
+            USING ERRCODE = '23514';
+    END IF;
+    RETURN NEW;
+END $$;
+
+CREATE TRIGGER reservas_capacidad
+    BEFORE INSERT OR UPDATE ON reservas
+    FOR EACH ROW EXECUTE FUNCTION trg_validar_capacidad();
+
+-- Lista para el TDBGrid: reserva + propietario/host + noches.
+CREATE VIEW v_reservas AS
+SELECT r.*,
+       (r.salida - r.llegada) AS noches,
+       a.propietario,
+       a.host_nombre,
+       a.parqueo_fijo
+FROM reservas r
+JOIN apartamentos a ON a.id = r.apto_id;
+
+-- Reporte de ocupación: una fila por apartamento para la fecha dada.
+CREATE FUNCTION ocupacion_por_fecha(p_fecha date)
+RETURNS TABLE (apto_id text, propietario text, host_nombre text,
+               reserva_id integer, huesped text, estado estado_reserva,
+               llegada date, salida date)
+LANGUAGE sql STABLE AS $$
+    SELECT a.id, a.propietario, a.host_nombre,
+           r.id, r.huesped, r.estado, r.llegada, r.salida
+    FROM apartamentos a
+    LEFT JOIN reservas r
+           ON r.apto_id = a.id
+          AND r.estado <> 'Cancelada'
+          AND daterange(r.llegada, r.salida, '[)') @> p_fecha
+    ORDER BY a.id;
+$$;
+
+-- Datos de ejemplo (fechas relativas a hoy)
+INSERT INTO apartamentos (id, habitaciones, capacidad, parqueo_fijo, propietario, tel_propietario, host_nombre, tel_host) VALUES
+ ('C3', '2 Hab. (Suite)',     4, 'Sótano 2 (P2) - C3', 'Lic. Roberto Mendoza', '+1 (809) 555-0192', 'Ana Gómez',     '+1 (809) 555-7788'),
+ ('A9', '3 Hab. (Penthouse)', 6, 'Nivel 1 (N1) - A9',  'Ing. Carmen De León',  '+1 (829) 444-9911', 'Carlos Ruiz',   '+1 (829) 444-2233'),
+ ('B5', '1 Hab. (Estudio)',   3, 'Sótano 1 (P1) - B5', 'Dra. Silvia Peña',     '+1 (809) 555-0345', 'Mario Tavárez', '+1 (809) 555-0346');
+
+INSERT INTO reservas (apto_id, estado, email, huesped, llegada, salida, huespedes, invitados, requiere_parqueo) VALUES
+ ('C3', 'Checked-Out', 'marta.rojas@example.com',     'Marta Rojas',          current_date - 9,  current_date - 6, 2, 0, true),
+ ('C3', 'Checked-In',  'benitezgoris@gmail.com',      'Juan Carlos Benítez',  current_date - 1,  current_date + 2, 2, 0, true),
+ ('C3', 'Pendiente',   'luis.almonte@example.com',    'Luis Almonte',         current_date + 4,  current_date + 7, 3, 1, true),
+ ('A9', 'Pendiente',   'estefany.perez@example.com',  'Estefany Pérez',       current_date,      current_date + 3, 4, 1, true),
+ ('A9', 'Checked-Out', 'carlos.mendez@example.com',   'Carlos Méndez',        current_date - 12, current_date - 8, 5, 0, false),
+ ('A9', 'Pendiente',   'ana.beltre@example.com',      'Ana Beltré',           current_date + 6,  current_date + 10, 2, 2, true),
+ ('B5', 'Checked-In',  'pedro.gil@example.com',       'Pedro Gil',            current_date - 2,  current_date,     1, 0, false),
+ ('B5', 'Cancelada',   'rosa.diaz@example.com',       'Rosa Díaz',            current_date + 1,  current_date + 3, 2, 0, false),
+ ('B5', 'Pendiente',   'diego.santana@example.com',   'Diego Santana',        current_date + 2,  current_date + 5, 2, 0, true);
+</script>
+<script>
+(function () {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const ESTADOS = ['Pendiente', 'Checked-In', 'Checked-Out', 'Cancelada'];
+  const KEY = 'reservas-movil-v1';
+  const pad = (n, l = 2) => String(n).padStart(l, '0');
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  /* ---------- Fechas ---------- */
+  const ymd = d => d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+  const TODAY = ymd(new Date());
+  const utc = s => { const p = s.split('-').map(Number); return Date.UTC(p[0], p[1] - 1, p[2]); };
+  const addDays = (s, n) => { const d = new Date(utc(s) + n * 864e5); return d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate()); };
+  const diffDays = (a, b) => Math.round((utc(b) - utc(a)) / 864e5);
+  const fmt = s => { if (!s) return ''; const p = s.split('-'); return p[2] + '/' + p[1] + '/' + p[0]; };
+  const MES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+  const DOW = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+  const dow = s => DOW[new Date(utc(s)).getUTCDay()];
+  const fshort = s => { const p = s.split('-'); return +p[2] + ' ' + MES[+p[1] - 1]; };
+
+  /* ---------- Datos ---------- */
+  function seed() {
+    const o = n => addDays(TODAY, n);
+    return {
+      nextId: 10,
+      apartamentos: [
+        { id: 'C3', hab: '2 Hab. (Suite)', cap: 4, parq: 'Sótano 2 (P2) - C3', owner: 'Lic. Roberto Mendoza', ownerTel: '+1 (809) 555-0192', host: 'Ana Gómez', hostTel: '+1 (809) 555-7788' },
+        { id: 'A9', hab: '3 Hab. (Penthouse)', cap: 6, parq: 'Nivel 1 (N1) - A9', owner: 'Ing. Carmen De León', ownerTel: '+1 (829) 444-9911', host: 'Carlos Ruiz', hostTel: '+1 (829) 444-2233' },
+        { id: 'B5', hab: '1 Hab. (Estudio)', cap: 3, parq: 'Sótano 1 (P1) - B5', owner: 'Dra. Silvia Peña', ownerTel: '+1 (809) 555-0345', host: 'Mario Tavárez', hostTel: '+1 (809) 555-0346' }
+      ],
+      reservas: [
+        { id: 1, apto: 'C3', estado: 'Checked-Out', email: 'marta.rojas@example.com', huesped: 'Marta Rojas', doc: '', llegada: o(-9), salida: o(-6), huespedes: 2, invitados: 0, parqueo: true, comentarios: '' },
+        { id: 2, apto: 'C3', estado: 'Checked-In', email: 'benitezgoris@gmail.com', huesped: 'Juan Carlos Benítez', doc: 'C:\\Docs\\identidad_c3.pdf', llegada: o(-1), salida: o(2), huespedes: 2, invitados: 0, parqueo: true, comentarios: 'Solicitud confirmada con depósito pagado. Cliente requiere acceso prioritario a parqueo.' },
+        { id: 3, apto: 'C3', estado: 'Pendiente', email: 'luis.almonte@example.com', huesped: 'Luis Almonte', doc: '', llegada: o(4), salida: o(7), huespedes: 3, invitados: 1, parqueo: true, comentarios: 'Llega en vuelo de la tarde.' },
+        { id: 4, apto: 'A9', estado: 'Pendiente', email: 'estefany.perez@example.com', huesped: 'Estefany Pérez', doc: '', llegada: o(0), salida: o(3), huespedes: 4, invitados: 1, parqueo: true, comentarios: 'Pide cuna para bebé.' },
+        { id: 5, apto: 'A9', estado: 'Checked-Out', email: 'carlos.mendez@example.com', huesped: 'Carlos Méndez', doc: '', llegada: o(-12), salida: o(-8), huespedes: 5, invitados: 0, parqueo: false, comentarios: '' },
+        { id: 6, apto: 'A9', estado: 'Pendiente', email: 'ana.beltre@example.com', huesped: 'Ana Beltré', doc: '', llegada: o(6), salida: o(10), huespedes: 2, invitados: 2, parqueo: true, comentarios: '' },
+        { id: 7, apto: 'B5', estado: 'Checked-In', email: 'pedro.gil@example.com', huesped: 'Pedro Gil', doc: '', llegada: o(-2), salida: o(0), huespedes: 1, invitados: 0, parqueo: false, comentarios: 'Sale hoy.' },
+        { id: 8, apto: 'B5', estado: 'Cancelada', email: 'rosa.diaz@example.com', huesped: 'Rosa Díaz', doc: '', llegada: o(1), salida: o(3), huespedes: 2, invitados: 0, parqueo: false, comentarios: 'Canceló por cambio de vuelo.' },
+        { id: 9, apto: 'B5', estado: 'Pendiente', email: 'diego.santana@example.com', huesped: 'Diego Santana', doc: '', llegada: o(2), salida: o(5), huespedes: 2, invitados: 0, parqueo: true, comentarios: '' }
+      ]
+    };
+  }
+  function load() { try { const d = JSON.parse(localStorage.getItem(KEY)); if (d && Array.isArray(d.reservas) && Array.isArray(d.apartamentos) && d.apartamentos.length) return d; } catch (e) { /* sin almacenamiento */ } return null; }
+  let db = load() || seed();
+  const persist = () => { try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (e) { /* ignorar */ } };
+  const apt = id => db.apartamentos.find(a => a.id === id);
+  const getRes = id => db.reservas.find(r => r.id === id);
+
+  /* ---------- SQL simulado ---------- */
+  const sqlLog = [];
+  const q = v => v == null || v === '' ? 'NULL' : typeof v === 'number' ? String(v) : typeof v === 'boolean' ? (v ? 'TRUE' : 'FALSE') : "'" + String(v).replace(/'/g, "''") + "'";
+  function logSQL(text, kind) {
+    sqlLog.unshift({ t: new Date().toTimeString().slice(0, 8), s: text, k: kind || 'r' });
+    if (sqlLog.length > 60) sqlLog.pop();
+    if (overlay === 'sql') renderLog();
+  }
+  function renderLog() {
+    $('logBox').innerHTML = sqlLog.length ? sqlLog.map(e => '<div class="logitem k-' + e.k + '"><time>' + e.t + '</time><pre>' + esc(e.s) + '</pre></div>').join('')
+      : '<div class="empty">Aún no hay consultas. Guarda una reserva o cambia un estado y aparecerán aquí.</div>';
+    $('schemaPre').textContent = $('sqlSchema').textContent.trim();
+  }
+
+  /* ---------- Avisos ---------- */
+  let toastT;
+  function toast(msg, kind) {
+    const t = $('toast'); t.textContent = msg; t.className = 'toast' + (kind === 'err' ? ' err' : ''); t.hidden = false;
+    clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, kind === 'err' ? 6000 : 3500);
+  }
+
+  const stKey = e => ({ 'Pendiente': 'pend', 'Checked-In': 'in', 'Checked-Out': 'out', 'Cancelada': 'can' }[e] || 'free');
+  const pill = (e, label) => '<span class="pill st-' + stKey(e) + '">' + esc(label || e) + '</span>';
+
+  /* ---------- Navegación ---------- */
+  const TABS = ['hoy', 'reservas', 'aptos', 'mas'];
+  const TITLES = { hoy: 'Hoy', reservas: 'Reservas', aptos: 'Apartamentos', mas: 'Más' };
+  let tab = 'hoy', overlay = null;
+  function showTab(t) {
+    tab = t;
+    TABS.forEach(x => { $('t-' + x).hidden = x !== t; });
+    document.querySelectorAll('.tab').forEach(b => { if (b.dataset.tab === t) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
+    $('barTitle').textContent = TITLES[t];
+    $('btnHoy').hidden = t !== 'hoy';
+    $('fab').parentElement.hidden = !(t === 'hoy' || t === 'reservas');
+    renderAll();
+    window.scrollTo(0, 0);
+  }
+  function openOverlay(n) { overlay = n; $('s-' + n).hidden = false; $('s-' + n).querySelector('.sbody').scrollTop = 0; document.body.style.overflow = 'hidden'; if (n === 'sql') renderLog(); }
+  function closeOverlay() { if (!overlay) return; $('s-' + overlay).hidden = true; overlay = null; document.body.style.overflow = ''; renderAll(); }
+
+  /* ---------- HOY ---------- */
+  let repDate = TODAY, repSeg = 'estado', stripStart = addDays(TODAY, -3);
+  function occupancy(d) {
+    return db.apartamentos.map(a => {
+      const live = db.reservas.filter(r => r.apto === a.id && r.estado !== 'Cancelada');
+      return {
+        a, cov: live.find(r => r.llegada <= d && d < r.salida),
+        llega: live.filter(r => r.llegada === d), sale: live.filter(r => r.salida === d),
+        next: live.filter(r => r.llegada > d).sort((x, y) => x.llegada.localeCompare(y.llegada))[0]
+      };
+    });
+  }
+  function renderHoy() {
+    const d = repDate;
+    if (d < stripStart || d > addDays(stripStart, 13)) stripStart = addDays(d, -3);
+    $('hoyBig').textContent = dow(d) + ' ' + fshort(d);
+    const n = diffDays(TODAY, d);
+    $('hoyTag').textContent = n === 0 ? 'Hoy' : n === 1 ? 'Mañana' : n === -1 ? 'Ayer' : n > 0 ? 'En ' + n + ' días' : 'Hace ' + (-n) + ' días';
+    let sh = '';
+    for (let i = 0; i < 14; i++) {
+      const x = addDays(stripStart, i);
+      sh += '<button class="day' + (x === TODAY ? ' today' : '') + '" data-d="' + x + '" aria-pressed="' + (x === d) + '" aria-label="' + dow(x) + ' ' + fshort(x) + '"><span>' + dow(x) + '</span><b>' + x.slice(8) + '</b></button>';
+    }
+    $('strip').innerHTML = sh;
+    const selBtn = $('strip').querySelector('[aria-pressed="true"]');
+    if (selBtn) $('strip').scrollLeft = Math.max(0, selBtn.offsetLeft - ($('strip').clientWidth - selBtn.offsetWidth) / 2);
+
+    const rows = occupancy(d);
+    const ocup = rows.filter(r => r.cov).length, lleg = rows.reduce((s, r) => s + r.llega.length, 0), sal = rows.reduce((s, r) => s + r.sale.length, 0);
+    const pl = (n, w) => n === 1 ? w : w + 's';
+    $('kpis').innerHTML = '<span class="kpi"><b>' + ocup + '</b>' + pl(ocup, 'ocupado') + '</span><span class="kpi"><b>' + (rows.length - ocup) + '</b>' + pl(rows.length - ocup, 'libre') + '</span><span class="kpi"><b>' + lleg + '</b>' + pl(lleg, 'llegada') + '</span><span class="kpi"><b>' + sal + '</b>' + pl(sal, 'salida') + '</span>';
+    $('btnHoy').hidden = repDate === TODAY;
+
+    document.querySelectorAll('[data-seg]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.seg === repSeg)));
+    $('hoyEstado').hidden = repSeg !== 'estado'; $('hoyCal').hidden = repSeg !== 'cal';
+    const label = { 'Checked-In': 'Ocupado', 'Pendiente': 'Reservado', 'Checked-Out': 'Cerrada' };
+    $('hoyEstado').innerHTML = rows.map(r => {
+      const mov = [].concat(r.llega.map(x => 'Llega ' + x.huesped), r.sale.map(x => 'Sale ' + x.huesped));
+      if (!mov.length && !r.cov && r.next) mov.push('Próxima llegada ' + fshort(r.next.llegada));
+      const body = r.cov
+        ? '<strong>' + esc(r.cov.huesped) + '</strong><span class="muted small">' + fshort(r.cov.llegada) + ' → ' + fshort(r.cov.salida) + ' · ' + diffDays(r.cov.llegada, r.cov.salida) + ' noches</span>'
+        : '<strong>Libre</strong><span class="muted small">Toca para crear una reserva</span>';
+      return '<button class="acard" data-apto="' + esc(r.a.id) + '" data-res="' + (r.cov ? r.cov.id : '') + '"><div class="ahead"><b class="aid">' + esc(r.a.id) + '</b><span class="aown">' + esc(r.a.owner) + ' · ' + esc(r.a.host) + '</span>' +
+        (r.cov ? pill(r.cov.estado, label[r.cov.estado]) : pill('Libre', 'Libre')) + '</div><div class="abody">' + body + (mov.length ? '<span class="mov">' + esc(mov.join(' · ')) + '</span>' : '') + '</div></button>';
+    }).join('');
+
+    const days = []; for (let i = 0; i < 14; i++) days.push(addDays(d, i));
+    let h = '<div class="calwrap"><table class="cal"><thead><tr><th>Apto</th>' + days.map(x => '<th class="' + (x === TODAY ? 'today ' : '') + (x === d ? 'sel' : '') + '">' + dow(x) + '<b>' + x.slice(8) + '</b></th>').join('') + '</tr></thead><tbody>';
+    db.apartamentos.forEach(a => {
+      const live = db.reservas.filter(r => r.apto === a.id && r.estado !== 'Cancelada');
+      h += '<tr><td>' + esc(a.id) + '</td>';
+      let i = 0;
+      while (i < 14) {
+        const r = live.find(x => x.llegada <= days[i] && days[i] < x.salida);
+        if (r) {
+          const span = Math.max(1, Math.min(diffDays(days[i], r.salida), 14 - i));
+          h += '<td class="res" colspan="' + span + '"><div class="calbox st-' + stKey(r.estado) + '" role="button" tabindex="0" data-id="' + r.id + '" title="' + esc(r.huesped) + '">' + esc(r.huesped) + '</div></td>';
+          i += span;
+        } else { h += '<td></td>'; i++; }
+      }
+      h += '</tr>';
+    });
+    $('hoyCal').innerHTML = h + '</tbody></table></div><p class="muted small" style="margin-top:10px">Desliza hacia los lados para ver más días. Toca una reserva para abrirla.</p>';
+  }
+
+  /* ---------- RESERVAS ---------- */
+  let fApto = 'Todos', fEstado = 'Todos';
+  function filtered() {
+    const desde = $('fDesde').value, hasta = $('fHasta').value, txt = $('fTxt').value.trim().toLowerCase();
+    return db.reservas.filter(r => (fApto === 'Todos' || r.apto === fApto) && (fEstado === 'Todos' || r.estado === fEstado) &&
+      (!desde || r.salida >= desde) && (!hasta || r.llegada <= hasta) && (!txt || (r.email + ' ' + r.huesped).toLowerCase().includes(txt)))
+      .sort((a, b) => a.llegada.localeCompare(b.llegada) || a.id - b.id);
+  }
+  function renderReservas(log) {
+    $('chipApto').innerHTML = ['Todos'].concat(db.apartamentos.map(a => a.id)).map(x => '<button class="chip" data-fapto="' + esc(x) + '" aria-pressed="' + (x === fApto) + '">' + (x === 'Todos' ? 'Todos los aptos' : esc(x)) + '</button>').join('');
+    $('chipEstado').innerHTML = ['Todos'].concat(ESTADOS).map(x => '<button class="chip" data-festado="' + x + '" aria-pressed="' + (x === fEstado) + '">' + (x === 'Todos' ? 'Todos los estados' : x) + '</button>').join('');
+    const desde = $('fDesde').value, hasta = $('fHasta').value;
+    $('rangeSum').textContent = 'Fechas: ' + (desde ? fshort(desde) : 'sin inicio') + ' al ' + (hasta ? fshort(hasta) : 'sin fin');
+    const rows = filtered();
+    $('lblCount').textContent = rows.length + ' de ' + db.reservas.length + ' reservas';
+    $('resList').innerHTML = rows.length ? rows.map(r => {
+      const a = apt(r.apto);
+      return '<button class="rcard" data-id="' + r.id + '"><span class="abadge">' + esc(r.apto) + '</span><span class="rmain"><b>' + esc(r.huesped) + '</b><small>' + fshort(r.llegada) + ' → ' + fshort(r.salida) + '</small><small>' + (a ? esc(a.owner) + ' / ' + esc(a.host) : '') + '</small></span><span class="rside">' + pill(r.estado) + '<small class="muted">' + diffDays(r.llegada, r.salida) + ' noches</small></span></button>';
+    }).join('') : '<div class="empty">Ninguna reserva coincide con los filtros. Cambia el rango de fechas o toca Limpiar filtros.</div>';
+    if (log) {
+      const w = [];
+      if (fApto !== 'Todos') w.push('r.apto_id = ' + q(fApto));
+      if (fEstado !== 'Todos') w.push('r.estado = ' + q(fEstado));
+      if (desde) w.push('r.salida >= ' + q(desde));
+      if (hasta) w.push('r.llegada <= ' + q(hasta));
+      const t = $('fTxt').value.trim(); if (t) w.push('(r.email ILIKE ' + q('%' + t + '%') + ' OR r.huesped ILIKE ' + q('%' + t + '%') + ')');
+      logSQL('SELECT * FROM v_reservas r' + (w.length ? '\nWHERE ' + w.join('\n  AND ') : '') + '\nORDER BY r.llegada, r.id;', 'r');
+    }
+  }
+
+  /* ---------- APARTAMENTOS ---------- */
+  const editing = new Set();
+  function renderAptos() {
+    $('aptList').innerHTML = db.apartamentos.map(a => {
+      const ed = editing.has(a.id);
+      const f = (k, label, v, type) => '<div class="field"><label for="a_' + esc(a.id) + '_' + k + '">' + label + '</label><input ' + (type === 'number' ? 'type="number" min="1" max="30" inputmode="numeric"' : 'type="text"') + ' id="a_' + esc(a.id) + '_' + k + '" value="' + esc(v) + '"><div class="ferr" id="ea_' + esc(a.id) + '_' + k + '"></div></div>';
+      return '<article class="apt" data-apto="' + esc(a.id) + '"><div class="apt-head"><b class="aid">' + esc(a.id) + '</b><div class="t"><b>' + esc(a.hab) + '</b><small>Máx. ' + a.cap + ' personas · ' + esc(a.parq || 'Sin parqueo') + '</small></div><button class="btn btn-sm" data-aedit="' + esc(a.id) + '">' + (ed ? 'Cerrar' : 'Editar') + '</button></div>' +
+        (ed ? '<div class="apt-edit">' + f('hab', 'Habitaciones', a.hab) + f('cap', 'Capacidad', a.cap, 'number') + f('parq', 'Parqueo fijo', a.parq) + f('owner', 'Propietario', a.owner) + f('ownerTel', 'Teléfono del propietario', a.ownerTel) + f('host', 'Host o administrador', a.host) + f('hostTel', 'Teléfono del host', a.hostTel) + '<button class="btn btn-primary" data-asave="' + esc(a.id) + '">Guardar apartamento</button></div>'
+          : '<dl class="dl"><dt>Propietario</dt><dd>' + esc(a.owner) + '<br><span class="muted">' + esc(a.ownerTel) + '</span></dd><dt>Host</dt><dd>' + esc(a.host) + '<br><span class="muted">' + esc(a.hostTel) + '</span></dd></dl>') + '</article>';
+    }).join('');
+  }
+  function saveApto(id) {
+    const a = apt(id); const g = k => $('a_' + id + '_' + k);
+    const nv = { hab: g('hab').value.trim(), cap: parseInt(g('cap').value, 10), parq: g('parq').value.trim(), owner: g('owner').value.trim(), ownerTel: g('ownerTel').value.trim(), host: g('host').value.trim(), hostTel: g('hostTel').value.trim() };
+    let bad = false;
+    ['owner', 'host', 'cap'].forEach(k => { g(k).classList.remove('bad'); $('ea_' + id + '_' + k).textContent = ''; });
+    if (!nv.owner) { bad = true; g('owner').classList.add('bad'); $('ea_' + id + '_owner').textContent = 'Escribe el propietario.'; }
+    if (!nv.host) { bad = true; g('host').classList.add('bad'); $('ea_' + id + '_host').textContent = 'Escribe el host.'; }
+    if (!Number.isInteger(nv.cap) || nv.cap < 1) { bad = true; g('cap').classList.add('bad'); $('ea_' + id + '_cap').textContent = 'La capacidad debe ser 1 o más.'; }
+    if (bad) { toast('Revisa los datos marcados.', 'err'); return; }
+    if (Object.keys(nv).some(k => a[k] !== nv[k])) {
+      Object.assign(a, nv); persist();
+      logSQL('UPDATE apartamentos SET habitaciones = ' + q(a.hab) + ', capacidad = ' + a.cap + ', parqueo_fijo = ' + q(a.parq) + ',\n  propietario = ' + q(a.owner) + ', tel_propietario = ' + q(a.ownerTel) + ',\n  host_nombre = ' + q(a.host) + ', tel_host = ' + q(a.hostTel) + ', actualizado_en = now()\nWHERE id = ' + q(a.id) + ';', 'w');
+      toast('Apartamento ' + id + ' actualizado. Las reservas ya muestran los datos nuevos.');
+    } else toast('No había cambios que guardar.');
+    editing.delete(id); renderAll();
+  }
+  function addApto() {
+    const id = $('aptNuevoId').value.trim().toUpperCase();
+    if (!/^[A-Z0-9]{1,6}$/.test(id)) { toast('El código usa de 1 a 6 letras o números. Ejemplo: D12.', 'err'); return; }
+    if (apt(id)) { toast('Ya existe el apartamento ' + id + '.', 'err'); return; }
+    db.apartamentos.push({ id, hab: '1 Hab.', cap: 2, parq: '', owner: 'Por asignar', host: 'Por asignar', ownerTel: '', hostTel: '' });
+    db.apartamentos.sort((x, y) => x.id.localeCompare(y.id)); persist();
+    logSQL('INSERT INTO apartamentos (id, habitaciones, capacidad, propietario, host_nombre)\nVALUES (' + q(id) + ", '1 Hab.', 2, 'Por asignar', 'Por asignar');", 'w');
+    $('aptNuevoId').value = ''; editing.add(id); renderAll(); toast('Apartamento ' + id + ' agregado. Completa sus datos.');
+  }
+
+  /* ---------- FORMULARIO ---------- */
+  let sel = null, formApto = null, dirty = false, backArmed = false;
+  const FIELDS = ['edtEmail', 'edtHuesped', 'edtDoc', 'btnDoc', 'edtLlegada', 'edtSalida', 'edtHuespedesCant', 'edtInvitadosCant', 'chkParqueo'];
+  function setDirty(v) { dirty = v; backArmed = false; }
+  function clearErrors() {
+    $('errSum').hidden = true;
+    document.querySelectorAll('#s-form .ferr').forEach(e => { e.textContent = ''; });
+    document.querySelectorAll('#s-form .bad').forEach(e => e.classList.remove('bad'));
+  }
+  function showErrors(errs) {
+    clearErrors(); if (!errs.length) return;
+    errs.forEach(e => { const m = $('e_' + e.id); if (m) m.textContent = e.msg; const el = $(e.id); if (el) el.classList.add('bad'); });
+    $('errSum').textContent = errs.length === 1 ? 'Hay 1 dato por corregir.' : 'Hay ' + errs.length + ' datos por corregir.'; $('errSum').hidden = false;
+    const first = $(errs[0].id) || $('e_' + errs[0].id);
+    if (first) { first.scrollIntoView({ block: 'center' }); if (first.focus) first.focus({ preventScroll: true }); }
+  }
+  function renderAptChips(locked) {
+    $('cbApto').innerHTML = db.apartamentos.map(a => '<button type="button" class="chip" role="radio" data-pick="' + esc(a.id) + '" aria-checked="' + (a.id === formApto) + '"' + (locked ? ' disabled' : '') + '>' + esc(a.id) + '</button>').join('');
+  }
+  function updateDerived() {
+    const a = apt(formApto);
+    $('aptInfo').innerHTML = a ? '<span><b>' + esc(a.hab) + '</b> · máximo ' + a.cap + ' personas</span><span>Propietario: ' + esc(a.owner) + '</span><span>Host: ' + esc(a.host) + '</span>' : '<span>Elige un apartamento.</span>';
+    $('edtParqueoUbicacion').value = $('chkParqueo').checked ? (a && a.parq ? a.parq : 'Este apartamento no tiene parqueo asignado') : 'No requiere parqueo';
+    const l = $('edtLlegada').value, s = $('edtSalida').value, n = l && s ? diffDays(l, s) : 0;
+    $('edtNoches').value = n > 0 ? String(n) : '—';
+  }
+  function updateHead() {
+    const cur = sel ? getRes(sel) : null, st = cur ? cur.estado : 'Nueva';
+    $('formTitle').textContent = cur ? 'Reserva ' + pad(cur.id, 4) : 'Reserva nueva';
+    $('formPill').innerHTML = cur ? pill(cur.estado) : pill('Libre', 'Nueva');
+    const closed = st === 'Checked-Out' || st === 'Cancelada';
+    FIELDS.forEach(id => { $(id).disabled = closed; });
+    if (st === 'Checked-In') $('edtLlegada').disabled = true;
+    document.querySelectorAll('[data-step]').forEach(b => { b.disabled = closed; });
+    renderAptChips(closed || st === 'Checked-In');
+    let h;
+    if (closed) h = '<button class="btn btn-primary" id="bGuardar">Guardar comentarios</button>';
+    else if (st === 'Checked-In') h = '<div class="row"><button class="btn" id="bGuardar">Guardar</button><button class="btn btn-go" id="bCheckOut">Check-Out</button></div>';
+    else h = '<div class="row"><button class="btn btn-primary" id="bGuardar">Guardar</button><button class="btn btn-go" id="bCheckIn">Check-In</button></div>' + (st === 'Pendiente' ? '<button class="btn btn-ghost" id="bCancelar">Cancelar reserva</button>' : '');
+    $('formFoot').innerHTML = h;
+  }
+  function fillForm(r) {
+    clearErrors(); sel = r.id; formApto = r.apto;
+    $('edtEmail').value = r.email; $('edtHuesped').value = r.huesped; $('edtDoc').value = r.doc || '';
+    $('edtLlegada').value = r.llegada; $('edtSalida').value = r.salida;
+    $('edtHuespedesCant').value = r.huespedes; $('edtInvitadosCant').value = r.invitados;
+    $('chkParqueo').checked = !!r.parqueo; $('edtComentarios').value = r.comentarios || '';
+    setDirty(false); updateHead(); updateDerived();
+  }
+  function newForm(pre) {
+    clearErrors(); sel = null; pre = pre || {};
+    formApto = pre.apto || (fApto !== 'Todos' ? fApto : db.apartamentos[0].id);
+    const l = pre.llegada || TODAY;
+    $('edtEmail').value = ''; $('edtHuesped').value = ''; $('edtDoc').value = '';
+    $('edtLlegada').value = l; $('edtSalida').value = addDays(l, 1);
+    $('edtHuespedesCant').value = 1; $('edtInvitadosCant').value = 0;
+    $('chkParqueo').checked = false; $('edtComentarios').value = '';
+    setDirty(false); updateHead(); updateDerived();
+  }
+  function openReserva(id, pre) { const r = id ? getRes(id) : null; if (r) fillForm(r); else newForm(pre); openOverlay('form'); }
+  function readForm() {
+    return { email: $('edtEmail').value.trim(), huesped: $('edtHuesped').value.trim(), doc: $('edtDoc').value.trim(), apto: formApto,
+      llegada: $('edtLlegada').value, salida: $('edtSalida').value, huespedes: parseInt($('edtHuespedesCant').value, 10), invitados: parseInt($('edtInvitadosCant').value || '0', 10),
+      parqueo: $('chkParqueo').checked, comentarios: $('edtComentarios').value.trim() };
+  }
+  function validate(f, cur) {
+    const errs = [], add = (id, msg) => errs.push({ id, msg });
+    if (!f.email) add('edtEmail', 'El correo electrónico es obligatorio.');
+    else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(f.email)) add('edtEmail', 'El correo no tiene un formato válido. Ejemplo: nombre@dominio.com.');
+    if (!f.huesped) add('edtHuesped', 'Escribe el nombre del huésped.');
+    if (!f.apto) add('cbApto', 'Selecciona un apartamento.');
+    if (!f.llegada) add('edtLlegada', 'Indica la fecha de llegada.');
+    if (!f.salida) add('edtSalida', 'Indica la fecha de salida.');
+    const datesOk = f.llegada && f.salida && f.salida > f.llegada;
+    if (f.llegada && f.salida && !datesOk) add('edtSalida', 'La salida debe ser posterior a la llegada (mínimo 1 noche).');
+    const hOk = Number.isInteger(f.huespedes) && f.huespedes >= 1, iOk = Number.isInteger(f.invitados) && f.invitados >= 0;
+    if (!hOk) add('edtHuespedesCant', 'Debe haber al menos 1 huésped.');
+    if (!iOk) add('edtInvitadosCant', 'Los invitados no pueden ser negativos.');
+    const a = apt(f.apto); let capErr = false, conflict = null;
+    if (a && hOk && iOk && f.huespedes + f.invitados > a.cap) { capErr = true; add('edtHuespedesCant', 'El apartamento ' + a.id + ' admite un máximo de ' + a.cap + ' personas entre huéspedes e invitados.'); }
+    if (a && datesOk) {
+      conflict = db.reservas.find(x => (!cur || x.id !== cur.id) && x.estado !== 'Cancelada' && x.apto === f.apto && x.llegada < f.salida && f.llegada < x.salida) || null;
+      if (conflict) add('edtLlegada', 'El apartamento ' + f.apto + ' ya tiene la reserva ' + pad(conflict.id, 4) + ' de ' + conflict.huesped + ' del ' + fmt(conflict.llegada) + ' al ' + fmt(conflict.salida) + '. Cambia las fechas o elige otro apartamento.');
+    }
+    return { errs, conflict, capErr };
+  }
+  function writeSQL(f, id) {
+    const cols = ['apto_id', 'email', 'huesped', 'doc_identidad', 'llegada', 'salida', 'huespedes', 'invitados', 'requiere_parqueo', 'comentarios'];
+    const vals = [f.apto, f.email, f.huesped, f.doc, f.llegada, f.salida, f.huespedes, f.invitados, f.parqueo, f.comentarios];
+    if (id == null) return 'INSERT INTO reservas (' + cols.join(', ') + ')\nVALUES (' + vals.map(q).join(', ') + ')\nRETURNING id;';
+    return 'UPDATE reservas SET\n  ' + cols.map((c, i) => c + ' = ' + q(vals[i])).join(',\n  ') + '\nWHERE id = ' + id + ';';
+  }
+  function guardar() {
+    const f = readForm(), cur = sel ? getRes(sel) : null;
+    if (cur && (cur.estado === 'Checked-Out' || cur.estado === 'Cancelada')) {
+      cur.comentarios = f.comentarios; persist(); setDirty(false);
+      logSQL('UPDATE reservas SET comentarios = ' + q(f.comentarios) + ' WHERE id = ' + cur.id + ';', 'w');
+      toast('Comentarios de la reserva ' + pad(cur.id, 4) + ' guardados.'); return cur;
+    }
+    const v = validate(f, cur);
+    if (v.errs.length) {
+      showErrors(v.errs);
+      if (v.conflict) logSQL(writeSQL(f, cur ? cur.id : null) + '\n-- ERROR: conflicting key value violates exclusion constraint "reservas_sin_solape" (SQLSTATE 23P01)', 'e');
+      else if (v.capErr) logSQL(writeSQL(f, cur ? cur.id : null) + '\n-- ERROR: Excede la capacidad del apartamento ' + f.apto + ' (SQLSTATE 23514)', 'e');
+      toast(v.errs.length === 1 ? 'Hay 1 dato por corregir.' : 'Hay ' + v.errs.length + ' datos por corregir.', 'err'); return null;
+    }
+    clearErrors(); let rec, accion;
+    if (cur) { Object.assign(cur, f); rec = cur; accion = 'actualizada'; logSQL(writeSQL(f, cur.id), 'w'); }
+    else { rec = Object.assign({ id: db.nextId++, estado: 'Pendiente' }, f); db.reservas.push(rec); accion = 'creada'; logSQL(writeSQL(f, null), 'w'); }
+    persist(); fillForm(rec);
+    toast('Reserva ' + pad(rec.id, 4) + ' ' + accion + ': ' + rec.apto + ', ' + diffDays(rec.llegada, rec.salida) + ' noches.');
+    return rec;
+  }
+  function checkIn() {
+    const cur = sel ? getRes(sel) : null;
+    if (cur && cur.estado !== 'Pendiente') { toast('Solo se puede hacer check-in a reservas Pendientes.', 'err'); return; }
+    const r = guardar(); if (!r) return;
+    if (r.llegada > TODAY) { toast('Reserva guardada. La llegada es el ' + fmt(r.llegada) + ' y el check-in se registra desde ese día.', 'err'); return; }
+    if (r.salida <= TODAY) { toast('La estadía ya terminó (salida ' + fmt(r.salida) + '). No se puede registrar el check-in.', 'err'); return; }
+    const otro = db.reservas.find(x => x.id !== r.id && x.apto === r.apto && x.estado === 'Checked-In');
+    if (otro) { toast('El apartamento ' + r.apto + ' sigue ocupado por ' + otro.huesped + '. Registra primero su check-out.', 'err'); return; }
+    r.estado = 'Checked-In'; persist();
+    logSQL("UPDATE reservas SET estado = 'Checked-In', checkin_real = now() WHERE id = " + r.id + " AND estado = 'Pendiente';", 'w');
+    fillForm(r); toast('Check-In registrado: ' + r.huesped + ' en el apartamento ' + r.apto + '.');
+  }
+  function checkOut() {
+    const r = sel ? getRes(sel) : null;
+    if (!r || r.estado !== 'Checked-In') { toast('El check-out solo aplica a reservas con Check-In.', 'err'); return; }
+    let extra = '';
+    if (TODAY > r.llegada && TODAY < r.salida) { r.salida = TODAY; extra = ' Salida anticipada: queda libre desde hoy.'; }
+    r.estado = 'Checked-Out'; persist();
+    logSQL("UPDATE reservas SET estado = 'Checked-Out', checkout_real = now(),\n  salida = CASE WHEN CURRENT_DATE > llegada THEN LEAST(salida, CURRENT_DATE) ELSE salida END\nWHERE id = " + r.id + " AND estado = 'Checked-In';", 'w');
+    fillForm(r); toast('Check-Out registrado. Apartamento ' + r.apto + ' liberado.' + extra);
+  }
+  function cancelar() {
+    const r = sel ? getRes(sel) : null;
+    if (!r || r.estado !== 'Pendiente') { toast('Solo se pueden cancelar reservas Pendientes.', 'err'); return; }
+    r.estado = 'Cancelada'; persist();
+    logSQL("UPDATE reservas SET estado = 'Cancelada' WHERE id = " + r.id + " AND estado = 'Pendiente';", 'w');
+    fillForm(r); toast('Reserva ' + pad(r.id, 4) + ' cancelada. Las fechas quedaron libres.');
+  }
+
+  /* Confirmación en dos toques */
+  function disarm(b) { if (b.dataset.label) { b.innerHTML = b.dataset.label; delete b.dataset.label; } b.classList.remove('armed'); clearTimeout(b._t); }
+  function confirmThen(btn, label, fn) {
+    if (btn.classList.contains('armed')) { disarm(btn); fn(); return; }
+    btn.dataset.label = btn.innerHTML; btn.innerHTML = '<span><b>' + label + '</b><small>Toca otra vez para confirmar</small></span>'; btn.classList.add('armed');
+    btn._t = setTimeout(() => disarm(btn), 4000);
+  }
+
+  /* ---------- Copiar ---------- */
+  function copyText(text, ok) {
+    const fail = () => toast('No se pudo copiar. Mantén presionado el texto para copiarlo.', 'err');
+    const fb = () => { try { const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); const r = document.execCommand('copy'); ta.remove(); r ? toast(ok) : fail(); } catch (e) { fail(); } };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(() => toast(ok), fb); else fb();
+  }
+  function csv() {
+    const rows = filtered(), c = v => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+    const out = ['id,estado,huesped,correo,apto,llegada,salida,noches,propietario,host,parqueo'].concat(rows.map(r => { const a = apt(r.apto) || {}; return [r.id, r.estado, r.huesped, r.email, r.apto, r.llegada, r.salida, diffDays(r.llegada, r.salida), a.owner, a.host, r.parqueo ? 'Sí' : 'No'].map(c).join(','); }));
+    copyText(out.join('\n'), 'CSV copiado: ' + rows.length + ' reservas.');
+  }
+
+  /* ---------- Render general ---------- */
+  function renderAll() {
+    if (tab === 'hoy') renderHoy(); else if (tab === 'reservas') renderReservas(false); else if (tab === 'aptos') renderAptos();
+  }
+
+  /* ---------- Eventos ---------- */
+  document.addEventListener('click', e => {
+    const t = e.target;
+    let el;
+    if ((el = t.closest('[data-tab]'))) { showTab(el.dataset.tab); return; }
+    if ((el = t.closest('[data-seg]'))) { repSeg = el.dataset.seg; renderHoy(); return; }
+    if ((el = t.closest('.day'))) { repDate = el.dataset.d; renderHoy(); logSQL("SELECT * FROM ocupacion_por_fecha('" + repDate + "');", 'r'); return; }
+    if ((el = t.closest('.acard'))) { el.dataset.res ? openReserva(+el.dataset.res) : openReserva(null, { apto: el.dataset.apto, llegada: repDate }); return; }
+    if ((el = t.closest('.calbox'))) { openReserva(+el.dataset.id); return; }
+    if ((el = t.closest('.rcard'))) { openReserva(+el.dataset.id); return; }
+    if ((el = t.closest('[data-fapto]'))) { fApto = el.dataset.fapto; renderReservas(true); return; }
+    if ((el = t.closest('[data-festado]'))) { fEstado = el.dataset.festado; renderReservas(true); return; }
+    if ((el = t.closest('[data-pick]'))) { formApto = el.dataset.pick; renderAptChips(false); updateDerived(); setDirty(true); return; }
+    if ((el = t.closest('[data-step]'))) {
+      const inp = $(el.dataset.step), min = +inp.min || 0, cur = parseInt(inp.value || String(min), 10);
+      inp.value = Math.max(min, (Number.isInteger(cur) ? cur : min) + (+el.dataset.delta)); setDirty(true); return;
+    }
+    if ((el = t.closest('[data-aedit]'))) { const id = el.dataset.aedit; editing.has(id) ? editing.delete(id) : editing.add(id); renderAptos(); return; }
+    if ((el = t.closest('[data-asave]'))) { saveApto(el.dataset.asave); return; }
+    if ((el = t.closest('[data-open]'))) { openOverlay(el.dataset.open); return; }
+    if ((el = t.closest('[data-close]'))) { closeOverlay(); return; }
+    if ((el = t.closest('[data-sqlseg]'))) {
+      const s = el.dataset.sqlseg; document.querySelectorAll('[data-sqlseg]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.sqlseg === s)));
+      $('logBox').hidden = s !== 'log'; $('schemaBox').hidden = s !== 'schema'; return;
+    }
+    if (t.closest('#btnCopySchema')) { copyText($('sqlSchema').textContent.trim(), 'Esquema copiado. Pégalo en pgAdmin o en psql.'); return; }
+    if (t.closest('#bGuardar')) { guardar(); return; }
+    if (t.closest('#bCheckIn')) { checkIn(); return; }
+    if (t.closest('#bCheckOut')) { checkOut(); return; }
+    if ((el = t.closest('#bCancelar'))) { confirmThen(el, 'Confirmar cancelación', cancelar); return; }
+    if (t.closest('#btnDoc')) { $('fileDoc').click(); return; }
+  });
+  $('fab').addEventListener('click', () => openReserva(null, tab === 'hoy' ? { llegada: repDate } : {}));
+  $('btnHoy').addEventListener('click', () => { repDate = TODAY; stripStart = addDays(TODAY, -3); renderHoy(); });
+  $('dayPrev').addEventListener('click', () => { repDate = addDays(repDate, -1); renderHoy(); });
+  $('dayNext').addEventListener('click', () => { repDate = addDays(repDate, 1); renderHoy(); });
+  $('formBack').addEventListener('click', () => {
+    if (dirty && !backArmed) { backArmed = true; toast('Hay cambios sin guardar. Toca volver otra vez para descartarlos.', 'err'); return; }
+    closeOverlay();
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && overlay) { if (overlay === 'form') $('formBack').click(); else closeOverlay(); } });
+  $('fTxt').addEventListener('input', () => renderReservas(false));
+  ['fDesde', 'fHasta'].forEach(id => $(id).addEventListener('change', () => renderReservas(true)));
+  $('btnLimpiar').addEventListener('click', () => { fApto = 'Todos'; fEstado = 'Todos'; $('fTxt').value = ''; $('fDesde').value = addDays(TODAY, -14); $('fHasta').value = addDays(TODAY, 30); renderReservas(true); });
+  $('btnCsv').addEventListener('click', csv);
+  $('btnAptAdd').addEventListener('click', addApto);
+  $('btnReset').addEventListener('click', e => confirmThen(e.currentTarget, 'Restablecer datos de ejemplo', () => { db = seed(); persist(); sqlLog.length = 0; editing.clear(); renderAll(); toast('Datos de ejemplo restablecidos.'); }));
+  $('s-form').addEventListener('input', () => setDirty(true));
+  $('chkParqueo').addEventListener('change', updateDerived);
+  $('edtLlegada').addEventListener('change', () => { const l = $('edtLlegada').value, s = $('edtSalida').value; if (l && (!s || s <= l)) $('edtSalida').value = addDays(l, 1); updateDerived(); });
+  $('edtSalida').addEventListener('change', updateDerived);
+  $('fileDoc').addEventListener('change', e => { const f = e.target.files && e.target.files[0]; if (f) { $('edtDoc').value = f.name; setDirty(true); } });
+
+  /* ---------- Inicio ---------- */
+  $('fDesde').value = addDays(TODAY, -14); $('fHasta').value = addDays(TODAY, 30);
+  logSQL("SELECT * FROM ocupacion_por_fecha('" + TODAY + "');", 'r');
+  showTab('hoy');
+})();
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('Service Worker registrado con éxito:', reg.scope))
+        .catch(err => console.error('Error al registrar el Service Worker:', err));
+    });
+  }
+</script>
+</body></html>
